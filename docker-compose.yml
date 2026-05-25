@@ -1,0 +1,106 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: retail_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: retail_user
+      POSTGRES_PASSWORD: retail_pass
+      POSTGRES_DB: retail_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retail_user -d retail_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - retail_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: retail_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - retail_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: retail_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://retail_user:retail_pass@postgres:5432/retail_db
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: supersecretkey_change_in_production
+      ENVIRONMENT: development
+      NUM_STORES: 100
+      NUM_PRODUCTS: 1000
+      TRANSACTIONS_PER_MINUTE: 50
+      LOW_STOCK_THRESHOLD: 20
+      CRITICAL_STOCK_THRESHOLD: 10
+      REORDER_MULTIPLIER: 3
+      CORS_ORIGINS: '["http://localhost:3000","http://localhost:8080"]'
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    networks:
+      - retail_net
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  simulator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: retail_simulator
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://retail_user:retail_pass@postgres:5432/retail_db
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: development
+      NUM_STORES: 100
+      NUM_PRODUCTS: 1000
+      TRANSACTIONS_PER_MINUTE: 50
+      LOW_STOCK_THRESHOLD: 20
+      CRITICAL_STOCK_THRESHOLD: 10
+      REORDER_MULTIPLIER: 3
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    networks:
+      - retail_net
+    command: python -m app.services
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  retail_net:
+    driver: bridge
