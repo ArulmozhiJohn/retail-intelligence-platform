@@ -1,4 +1,4 @@
-# 🏪 Distributed Retail Intelligence Platform
+# Distributed Retail Intelligence Platform
 
 A scalable retail analytics platform simulating 96 stores and 1,000+ products
 with real-time inventory monitoring, sales analytics, and automated replenishment workflows.
