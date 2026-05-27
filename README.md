@@ -11,7 +11,7 @@ with real-time inventory monitoring, sales analytics, and automated replenishmen
 - **Frontend:** HTML5, Chart.js
 
 ## Features
-- 96 stores across 6 US regions
+- 96 stores across 6 Indian regions
 - 1,000 products across 10 categories
 - 57,600+ inventory records
 - Real-time transaction simulation
