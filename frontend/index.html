@@ -473,12 +473,12 @@
 
 <!-- ══ NAV ══════════════════════════════════════════════════════════ -->
 <nav>
-  <div class="nav-tab active" onclick="showPage('dashboard', this)">📊 Dashboard</div>
-  <div class="nav-tab" onclick="showPage('inventory', this)">📦 Inventory</div>
-  <div class="nav-tab" onclick="showPage('transactions', this)">💳 Transactions</div>
-  <div class="nav-tab" onclick="showPage('replenishments', this)">🔄 Replenishments</div>
-  <div class="nav-tab" onclick="showPage('stores', this)">🏪 Stores</div>
-  <div class="nav-tab" onclick="showPage('analytics', this)">📈 Analytics</div>
+  <div class="nav-tab active" onclick="showPage('dashboard', this)"> Dashboard</div>
+  <div class="nav-tab" onclick="showPage('inventory', this)"> Inventory</div>
+  <div class="nav-tab" onclick="showPage('transactions', this)"> Transactions</div>
+  <div class="nav-tab" onclick="showPage('replenishments', this)"> Replenishments</div>
+  <div class="nav-tab" onclick="showPage('stores', this)"> Stores</div>
+  <div class="nav-tab" onclick="showPage('analytics', this)"> Analytics</div>
 </nav>
 
 <!-- ══ MAIN ══════════════════════════════════════════════════════════ -->
@@ -542,14 +542,14 @@
     </div>
     <div class="table-card">
       <div class="table-header">
-        <div class="table-title">⚠️ Low Stock Alerts</div>
+        <div class="table-title">!!! Low Stock Alerts</div>
         <span class="chart-badge badge-amber">AUTO-REFRESH</span>
       </div>
       <div id="low-stock-table"><div class="loading"><div class="spinner"></div></div></div>
     </div>
     <div class="table-card">
       <div class="table-header">
-        <div class="table-title">🚨 Out of Stock Items</div>
+        <div class="table-title">*** Out of Stock Items</div>
         <span class="chart-badge badge-red">CRITICAL</span>
       </div>
       <div id="out-of-stock-table"><div class="loading"><div class="spinner"></div></div></div>
@@ -563,7 +563,7 @@
     </div>
     <div class="table-card">
       <div class="table-header">
-        <div class="table-title">💳 Recent Transactions</div>
+        <div class="table-title"> Recent Transactions</div>
         <span class="chart-badge badge-green">LIVE FEED</span>
       </div>
       <div id="recent-tx-table"><div class="loading"><div class="spinner"></div></div></div>
@@ -578,12 +578,12 @@
     <div style="margin-bottom:1rem;">
       <button class="refresh-btn" style="padding:10px 20px; font-size:0.82rem;"
         onclick="triggerReplenishment()">
-        ⚡ Auto-Trigger Replenishments
+         Auto-Trigger Replenishments...
       </button>
     </div>
     <div class="table-card">
       <div class="table-header">
-        <div class="table-title">🔄 Pending Orders</div>
+        <div class="table-title"> Pending Orders</div>
         <span class="chart-badge badge-blue">PENDING</span>
       </div>
       <div id="rep-table"><div class="loading"><div class="spinner"></div></div></div>
@@ -597,7 +597,7 @@
     </div>
     <div class="table-card">
       <div class="table-header">
-        <div class="table-title">🏪 All Stores</div>
+        <div class="table-title"> All Stores</div>
         <span class="chart-badge badge-blue" id="store-count-badge">--</span>
       </div>
       <div id="stores-table"><div class="loading"><div class="spinner"></div></div></div>
@@ -883,7 +883,7 @@ async function loadInventory() {
             <td>${statusBadge('out_of_stock')}</td>
           </tr>`).join('')}
         </tbody>
-      </table>` : '<div class="loading">✅ No out-of-stock items</div>';
+      </table>` : '<div class="loading"> No out-of-stock items</div>';
   }
 }
 
@@ -993,22 +993,22 @@ async function loadReplenishments() {
             <td class="mono">${new Date(r.created_at).toLocaleDateString()}</td>
           </tr>`).join('')}
         </tbody>
-      </table>` : '<div class="loading">✅ No pending replenishments</div>';
+      </table>` : '<div class="loading"> No pending replenishments</div>';
   }
 }
 
 async function triggerReplenishment() {
   const btn = event.target;
-  btn.textContent = '⏳ Triggering...';
+  btn.textContent = ' Triggering...';
   btn.disabled = true;
   const result = await api('/replenishments/auto-trigger');
   if (result) {
-    btn.textContent = `✅ Created ${result.count} orders`;
+    btn.textContent = ` Created ${result.count} orders`;
     setTimeout(() => loadReplenishments(), 500);
   } else {
-    btn.textContent = '❌ Error';
+    btn.textContent = ' X Error';
   }
-  setTimeout(() => { btn.textContent = '⚡ Auto-Trigger Replenishments'; btn.disabled = false; }, 3000);
+  setTimeout(() => { btn.textContent = ' Auto-Trigger Replenishments'; btn.disabled = false; }, 3000);
 }
 
 // ── Stores ────────────────────────────────────────────────────────
